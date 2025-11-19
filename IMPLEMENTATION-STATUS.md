@@ -20,7 +20,7 @@ All core components have been implemented following the research plan. The imple
 ### ✅ Phase 1: Core Infrastructure (100% Complete)
 
 - **Project Structure**: Solution file, project file with all dependencies configured
-- **Target Frameworks**: net8.0, net9.0, netstandard2.0
+- **Target Framework**: net9.0
 - **AnthropicChatClient**: Complete `IChatClient` implementation
   - Support for both `AnthropicClient` (standard API) and `AnthropicFoundryClient` (Azure Foundry)
   - Non-streaming chat completion

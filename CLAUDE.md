@@ -85,11 +85,9 @@ AnthropicChatClient (implements IChatClient)
 **PDF handling**: Use Beta API, convert to base64 → `PDFBlock`
 **Supported formats**: image/jpeg, image/png, image/gif, image/webp, application/pdf
 
-## Target Frameworks
+## Target Framework
 
-- **net8.0** - LTS support
-- **net9.0** - Latest features (C# 13)
-- **netstandard2.0** - Broad compatibility (match Anthropic.Foundry)
+- **net9.0** - Latest .NET with C# 13 features
 
 ## Required Dependencies
 
