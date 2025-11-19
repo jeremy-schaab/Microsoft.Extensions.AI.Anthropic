@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+
+    <!-- Package Metadata -->
+    <PackageId>Microsoft.Extensions.AI.Anthropic</PackageId>
+    <Version>0.1.0-preview</Version>
+    <Authors>Jeremy Schaab</Authors>
+    <Company>FYI Software</Company>
+    <Description>Integration of Anthropic's Claude AI models with Microsoft.Extensions.AI abstractions framework. Supports both Azure Anthropic Foundry (Azure-hosted) and standard Anthropic API.</Description>
+    <PackageTags>AI;Anthropic;Claude;Microsoft.Extensions.AI;Azure;ChatClient;LLM</PackageTags>
+    <PackageProjectUrl>https://github.com/jeremy-schaab/Microsoft.Extensions.AI.Anthropic</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jeremy-schaab/Microsoft.Extensions.AI.Anthropic</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Primary: Azure Anthropic Foundry -->
+    <PackageReference Include="Anthropic.Foundry" Version="0.0.1" />
+
+    <!-- Anthropic SDK (transitive via Foundry, but explicit for clarity) -->
+    <PackageReference Include="Anthropic" Version="10.1.2" />
+
+    <!-- Azure Authentication -->
+    <PackageReference Include="Azure.Identity" Version="1.17.0" />
+    <PackageReference Include="Microsoft.Extensions.AI" Version="9.9.1" />
+    <PackageReference Include="Microsoft.Rest.ClientRuntime.Azure.Authentication" Version="2.4.1" />
+
+    <!-- Core Dependencies -->
+    <PackageReference Include="System.Text.Json" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.9" />
+  </ItemGroup>
+
+  <!-- Microsoft.Extensions.AI.Abstractions will be added as PackageReference when available -->
+  <!-- For now, assuming it's available as a package reference -->
+  <ItemGroup Condition="'$(Configuration)' != 'LocalDevelopment'">
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" Version="9.9.1" />
+  </ItemGroup>
+
+  <!-- Include README in package -->
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+</Project>
