@@ -64,12 +64,53 @@ Install the NuGet package (coming soon):
 dotnet add package Microsoft.Extensions.AI.Anthropic
 ```
 
+### ⚠️ Important: Embedded Anthropic SDK (Temporary)
+
+**This package currently embeds the Anthropic SDK source code due to a bug in the official NuGet package.**
+
+- **Why?** There was a critical bug in the Anthropic C# SDK that prevented proper functionality
+- **Issue**: [anthropic-sdk-csharp#18](https://github.com/anthropics/anthropic-sdk-csharp/pull/18)
+- **Status**: Bug fix already submitted and merged
+- **Future**: Once Anthropic releases the updated NuGet package, this library will switch to using the official package instead of embedding the SDK
+
+**Impact**: The `Microsoft.Extensions.AI.Anthropic` NuGet package is slightly larger because it includes:
+- `Anthropic.dll` (embedded)
+- `Anthropic.Foundry.dll` (embedded)
+
+**For users**: No action needed. Everything works as expected, and this will be transparent once we migrate to the official package.
+
+#### Switching to Official NuGet Packages (When Available)
+
+Once Anthropic releases the updated SDK with the bug fix, you can switch from embedded assemblies to official NuGet packages:
+
+1. **Open** `src/Microsoft.Extensions.AI.Anthropic/Microsoft.Extensions.AI.Anthropic.csproj`
+
+2. **Comment out** the project references:
+   ```xml
+   <!-- <ProjectReference Include="..\Anthropic.Foundry\Anthropic.Foundry.csproj" PrivateAssets="all" />
+        <ProjectReference Include="..\Anthropic\Anthropic.csproj" PrivateAssets="all" /> -->
+   ```
+
+3. **Uncomment** the package references:
+
+***Use version with Bug Fix***
+   ```xml
+   <PackageReference Include="Anthropic.Foundry" Version="0.0.1" />
+   <PackageReference Include="Anthropic" Version="10.1.2" />
+   ```
+
+4. **Remove** the MSBuild target (lines 56-67) that embeds the assemblies
+
+5. **Rebuild** and package
+
+**We will update this library and release a new version once the official packages are available.**
+
 ### Required Dependencies
 
-The package includes dependencies on:
+The package includes embedded assemblies (temporary):
 
-- `Anthropic.Foundry` (0.0.1+) - Azure Anthropic Foundry client
-- `Anthropic` (10.1.2+) - Standard Anthropic SDK
+- `Anthropic.Foundry` (0.0.1+) - Azure Anthropic Foundry client *(embedded)*
+- `Anthropic` (10.1.2+) - Standard Anthropic SDK *(embedded - see note above)*
 - `Azure.Identity` (1.17.0+) - Azure authentication
 - `Microsoft.Extensions.AI.Abstractions` - Core abstractions
 
