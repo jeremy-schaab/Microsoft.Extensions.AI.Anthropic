@@ -49,7 +49,7 @@ However, **significant work remains** in Phases 5-6 (Testing, Examples, Utilitie
 - ✅ GetService() for service discovery
 
 **Gaps/Issues:**
-- ⚠️ **CRITICAL**: Target frameworks set to `net9.0` only (should be `net8.0;net9.0;netstandard2.0`)
+- ⚠️ **CRITICAL**: Target frameworks set to `net9.0` only (should be `net9.0`)
 - ⚠️ **CRITICAL**: Nullable field `_anthropicClient` set to `null!` in one constructor but accessed in Dispose()
 - ⚠️ String-based type detection (`Contains("Foundry")`) instead of type checking
 - ⚠️ Reflection-based endpoint detection is fragile
@@ -283,7 +283,7 @@ However, **significant work remains** in Phases 5-6 (Testing, Examples, Utilitie
    - **Fix Time**: 1 hour
 
 3. **Target Framework Mismatch** (Microsoft.Extensions.AI.Anthropic.csproj:4)
-   - Only targets `net9.0`, should target `net8.0;net9.0;netstandard2.0`
+   - Only targets `net9.0`, should target `net9.0`
    - **Risk**: Compatibility issues
    - **Fix Time**: 5 minutes
 

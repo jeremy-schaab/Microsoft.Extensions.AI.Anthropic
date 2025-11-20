@@ -1,0 +1,65 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>
+      The official .NET library for the Anthropic C# service API.
+    </Description>
+    <AssemblyTitle>SDK Code Generation Anthropic C#</AssemblyTitle>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Nullable>enable</Nullable>
+    <VersionPrefix>10.1.3</VersionPrefix>
+    <TargetFrameworks>net9.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <!-- Generate an XML documentation file for the project. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://www.github.com/anthropics/anthropic-sdk-csharp</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <!-- Embed source files that are not tracked by the source control manager in the PDB -->
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <!-- Disable missing XML documentation warnings -->
+    <NoWarn>$(NoWarn),1570,1573,1574,1591</NoWarn>
+    <!-- Disable deprecation warnings since we may reference our own deprecated symbols -->
+    <NoWarn>$(NoWarn),0618</NoWarn>
+    <!-- Disable JSON warnings (beta) -->
+    <NoWarn>$(NoWarn),IL2026,IL3050</NoWarn>
+    <!-- Disable warnings about netstandard compat -->
+    <NoWarn>$(NoWarn),IDE0028,IDE0057,IDE0130,IDE0305,CA1847,CA1866</NoWarn>
+    <Configurations>Debug;Release</Configurations>
+    <IsTrimmable Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net6.0'))">true</IsTrimmable>
+    <IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net7.0'))">true</IsAotCompatible>
+    <ImplicitUsings>disable</ImplicitUsings>
+
+    <PackageId>Anthropic</PackageId>
+    <BuildPackage>true</BuildPackage>
+		<Deterministic>true</Deterministic>
+		<Version>10.1.3</Version>
+		<Authors>Stainless Software, Inc.</Authors>
+		<Company>Stainless Software, Inc.</Company>
+		<PackageProjectUrl>https://github.com/anthropics/anthropic-sdk-csharp</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/anthropics/anthropic-sdk-csharp</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageReleaseNotes>PRE-RELEASE NOT FOR DISTRIBUTION</PackageReleaseNotes>
+		<LangVersion>Latest</LangVersion>
+
+		<!-- Optional: Publish the repository URL in the built .nupkg (in the NuSpec <Repository> element) -->
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+
+		<!-- Optional: Embed source files that are not tracked by the source control manager in the PDB -->
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+		<!-- Optional: Build symbol package (.snupkg) to distribute the PDB containing Source Link -->
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+
+		<SupportedFrameworks>net9.0</SupportedFrameworks>
+  </PropertyGroup>
+	
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Text.Json" Version="9.0.9"/>
+  </ItemGroup>
+</Project>

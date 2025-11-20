@@ -1,21 +1,86 @@
+using Anthropic.Foundry;
+using AzureFoundryBasicExample;
+using DotNetEnv;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.AI.Anthropic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+
+
+// Load environment variables from .env file if it exists
+Env.Load();
 
 // This example demonstrates basic usage of the Anthropic chat client
 // with Azure Anthropic Foundry (Azure-hosted Anthropic API)
 
 var builder = Host.CreateApplicationBuilder(args);
 
-// Register the Azure Anthropic Foundry chat client
-// Supports three authentication methods:
-// 1. API Key (ANTHROPIC_FOUNDRY_API_KEY environment variable)
-// 2. Azure Identity (DefaultAzureCredential - recommended for production)
-// 3. Bearer Token (ANTHROPIC_FOUNDRY_BEARER_TOKEN environment variable)
+// ========================================
+// Authentication Method 1: Environment Variables (Recommended for Development)
+// ========================================
+// Reads configuration from environment variables:
+// - ANTHROPIC_FOUNDRY_RESOURCE (required)
+// - ANTHROPIC_FOUNDRY_API_KEY (optional, uses Azure Identity if not set)
 builder.Services.AddAnthropicFoundryChatClientFromEnvironment(
     resourceName: null, // Will read from ANTHROPIC_FOUNDRY_RESOURCE env var
     modelId: "claude-sonnet-4-5");
+
+// ========================================
+// Authentication Method 2: Explicit API Key (Development/Testing)
+// ========================================
+// Uncomment to use explicit resource name and API key:
+/*
+builder.Services.AddAnthropicFoundryChatClient(
+    resourceName: "my-anthropic-resource",
+    apiKey: "sk-ant-foundry-xxxxx",
+    modelId: "claude-sonnet-4-5");
+*/
+
+// ========================================
+// Authentication Method 3: Azure Identity (Production - RECOMMENDED)
+// ========================================
+// Uncomment to use Azure Identity (DefaultAzureCredential):
+// This is the MOST SECURE method for production deployments
+/*
+using Anthropic.Foundry;
+using Azure.Identity;
+
+var credentials = new AnthropicFoundryIdentityTokenCredentials(
+    tokenCredential: new DefaultAzureCredential(),
+    resourceName: "my-anthropic-resource");
+
+builder.Services.AddAnthropicFoundryChatClient(
+    credentials: credentials,
+    modelId: "claude-sonnet-4-5");
+*/
+
+// ========================================
+// Authentication Method 4: Bearer Token (Advanced)
+// ========================================
+// Uncomment to use bearer token authentication:
+/*
+using Anthropic.Foundry;
+
+var credentials = new AnthropicFoundryBearerTokenCredentials(
+    bearerToken: "your-bearer-token",
+    resourceName: "my-anthropic-resource");
+
+builder.Services.AddAnthropicFoundryChatClient(
+    credentials: credentials,
+    modelId: "claude-sonnet-4-5");
+*/
+
+// ========================================
+// Alternative: IChatClientBuilder Pattern (Middleware Support)
+// ========================================
+// Uncomment to use builder pattern with middleware:
+/*
+builder.Services.AddChatClient(chatBuilder => chatBuilder
+    .UseAnthropicFoundryFromEnvironment(modelId: "claude-sonnet-4-5")
+    // .UseLogging()        // Add logging middleware
+    // .UseOpenTelemetry()  // Add telemetry middleware
+    );
+*/
 
 var host = builder.Build();
 

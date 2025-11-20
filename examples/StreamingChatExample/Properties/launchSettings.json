@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "StreamingChatExample": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

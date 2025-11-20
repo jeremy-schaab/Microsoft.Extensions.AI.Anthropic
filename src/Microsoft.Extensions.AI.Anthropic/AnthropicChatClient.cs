@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Anthropic;
+using Anthropic.Core;
 using Anthropic.Foundry;
 using Anthropic.Services;
 using Microsoft.Extensions.AI;
@@ -43,8 +44,38 @@ public sealed class AnthropicChatClient : IChatClient
     private readonly IAnthropicClient _anthropicClient;
     private readonly IMessageService _messageService;
     private readonly string? _modelId;
-    private readonly ChatClientMetadata _metadata;
 
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="AnthropicChatClient"/> with an API key and resource name.
+    /// </summary>
+    /// <param name="apiKey">The API key for authentication.</param>
+    /// <param name="resourceName">The resource name for the Anthropic service.</param>
+    /// <param name="modelId"></param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="apiKey"/> is null.</exception>
+    public AnthropicChatClient(string apiKey, string resourceName, string? modelId = null)
+    {
+        ArgumentNullException.ThrowIfNull(apiKey);
+        var credentials = new AnthropicFoundryApiKeyCredentials(
+            apiKey: apiKey,
+            resourceName: resourceName);
+
+        var foundryClient = new AnthropicFoundryClient(credentials);
+        _anthropicClient = foundryClient;
+        _modelId = modelId;
+        _messageService = foundryClient.Messages;
+        // Detect if this is Azure Foundry by checking the type
+        var isAzureFoundry = true;
+
+        // Attempt to get endpoint information
+        var endpoint = TryGetEndpoint(foundryClient);
+
+        // Create metadata
+        Metadata = new ChatClientMetadata(
+            providerName: isAzureFoundry ? "anthropic-foundry" : "anthropic",
+            providerUri: endpoint,
+            defaultModelId: _modelId);
+    }
     /// <summary>
     /// Initializes a new instance of <see cref="AnthropicChatClient"/> that wraps an Anthropic client.
     /// </summary>
@@ -73,10 +104,10 @@ public sealed class AnthropicChatClient : IChatClient
         var endpoint = TryGetEndpoint(anthropicClient);
 
         // Create metadata
-        _metadata = new ChatClientMetadata(
+        Metadata = new ChatClientMetadata(
             providerName: isAzureFoundry ? "anthropic-foundry" : "anthropic",
             providerUri: endpoint,
-            defaultModelId : _modelId);
+            defaultModelId: _modelId);
     }
 
     /// <summary>
@@ -104,16 +135,16 @@ public sealed class AnthropicChatClient : IChatClient
         var endpoint1 = endpoint;
         var isAzureFoundry1 = isAzureFoundry;
 
-        _metadata = new ChatClientMetadata(
+        Metadata = new ChatClientMetadata(
             providerName: isAzureFoundry1 ? "anthropic-foundry" : "anthropic",
             providerUri: endpoint1,
-            defaultModelId : _modelId);
+            defaultModelId: _modelId);
     }
 
     /// <summary>
     /// Meta Data Property
     /// </summary>
-    public ChatClientMetadata Metadata => _metadata;
+    public ChatClientMetadata Metadata { get; }
 
     /// <inheritdoc/>
     public async Task<ChatResponse> GetResponseAsync(
@@ -142,7 +173,7 @@ public sealed class AnthropicChatClient : IChatClient
         var response = await _messageService.Create(createParams, cancellationToken).ConfigureAwait(false);
 
         // Convert response back to Microsoft.Extensions.AI format
-        return AnthropicMessageConverter.FromAnthropicMessage(response, _metadata);
+        return AnthropicMessageConverter.FromAnthropicMessage(response, Metadata);
     }
 
     /// <inheritdoc/>
@@ -173,7 +204,7 @@ public sealed class AnthropicChatClient : IChatClient
 
         await foreach (var update in AnthropicStreamingConverter.ConvertStreamAsync(
             streamingEvents,
-            _metadata,
+            Metadata,
             cancellationToken).ConfigureAwait(false))
         {
             yield return update;
@@ -194,7 +225,7 @@ public sealed class AnthropicChatClient : IChatClient
         // Return metadata if requested
         if (serviceKey == null && serviceType == typeof(ChatClientMetadata))
         {
-            return _metadata;
+            return Metadata;
         }
 
         // Return the underlying Anthropic client if requested

@@ -79,7 +79,7 @@ internal static class AnthropicMessageConverter
                 {
                     if (systemBuilder.Length > 0)
                     {
-                        systemBuilder.AppendLine(); // Separate multiple system messages
+                        systemBuilder.Append('\n'); // Separate multiple system messages with Unix newline
                     }
                     systemBuilder.Append(textContent);
                 }
@@ -237,7 +237,9 @@ internal static class AnthropicMessageConverter
         }
 
         // First message must be from user
-        if (messages[0].Role != Role.User)
+        // Note: Role is ApiEnum<string, Role>, access .Json property for string value
+        var firstRoleJson = (messages[0].Role as dynamic)?.Json?.ToString();
+        if (firstRoleJson != "user")
         {
             throw new ArgumentException(
                 "The first message must be from the user. Anthropic's API requires the conversation to start with a user message.");
@@ -246,14 +248,14 @@ internal static class AnthropicMessageConverter
         // Validate alternating pattern
         for (int i = 1; i < messages.Count; i++)
         {
-            var prevRole = messages[i - 1].Role;
-            var currentRole = messages[i].Role;
+            var prevRoleJson = (messages[i - 1].Role as dynamic)?.Json?.ToString();
+            var currentRoleJson = (messages[i].Role as dynamic)?.Json?.ToString();
 
             // Messages should alternate between user and assistant
-            if (prevRole == currentRole)
+            if (prevRoleJson == currentRoleJson)
             {
                 throw new ArgumentException(
-                    $"Messages must alternate between user and assistant. Found consecutive {currentRole} messages at position {i}.");
+                    $"Messages must alternate between user and assistant. Found consecutive {currentRoleJson} messages at position {i}.");
             }
         }
     }

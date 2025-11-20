@@ -400,3 +400,10 @@ FodyWeavers.xsd
 
 # Claude Code files
 .claude/
+
+# Environment files (protect API keys)
+.env
+.env.local
+.env.development
+.env.production
+*.env
